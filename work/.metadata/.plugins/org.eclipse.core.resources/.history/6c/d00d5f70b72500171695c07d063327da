@@ -1,0 +1,73 @@
+
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import codes.DBConnection;
+
+/**
+ * Servlet implementation class CalcRevenue
+ */
+@WebServlet("/CalcRevenue")
+public class CalcRevenue extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	Connection con = DBConnection.getDBConnection();
+	
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public CalcRevenue() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+		try {
+			String fdt = request.getParameter("fdate");
+			String tdt = request.getParameter("tdate");
+			ArrayList<String> grandtotal = new ArrayList<String>();
+			ArrayList<String> region = new ArrayList<String>();
+			int i = 0;
+			PreparedStatement ps = con.prepareStatement("SELECT SUM(invoice.grand_total) AS gtotal, user_detail.city from invoice, user_detail WHERE invoice.user_detail = user_detail.userid AND invoice.date >= '" + fdt + "' AND invoice.date <= '" + tdt + "' GROUP BY user_detail.city");
+        	ResultSet rs = ps.executeQuery();
+        	while(rs.next())
+        	{
+        		grandtotal.add(rs.getString("gtotal"));
+        		region.add(rs.getString("city"));
+        	}
+        	System.out.println(""+grandtotal+" "+region);
+        	request.setAttribute("grandtotal", grandtotal);
+        	request.setAttribute("region", region);
+        	
+        	RequestDispatcher rd = request.getRequestDispatcher("/displaychart.jsp");
+	        rd.forward(request, response);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+
+}

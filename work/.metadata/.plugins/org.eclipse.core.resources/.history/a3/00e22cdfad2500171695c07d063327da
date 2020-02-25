@@ -1,0 +1,128 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.sql.*" %>
+<%@page import="codes.DBConnection"%>
+    
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+ <%
+          Connection con=DBConnection.getDBConnection();
+try{
+	String prodid = "";
+	int ram_counter = 0;
+	int camera_counter = 0;
+	int memory_counter = 0;
+	int battery_counter = 0;
+	int speed_counter = 0;
+	String maxcount = "";
+	List<String> pids = new ArrayList<String>();
+	List<String> ptitles = new ArrayList<String>();
+PreparedStatement psr = con.prepareStatement("SELECT reviews.productId, COUNT(reviews.productId) as cnt from reviews WHERE reviews.nbprior = 'bad' GROUP BY reviews.productId ORDER BY COUNT(reviews.productId)");
+ResultSet rsr = psr.executeQuery();
+while(rsr.next())
+{
+	prodid = rsr.getString("productId");	
+	int countonr = rsr.getInt("cnt");
+	if(countonr >= 2)
+	{
+		PreparedStatement psp = con.prepareStatement("SELECT reviews.Review FROM reviews WHERE reviews.productId = '" + prodid + "' AND reviews.nbprior = 'bad'");
+		ResultSet rsp = psp.executeQuery();
+		while(rsp.next())
+		{
+			if(rsp.getString("Review").contains("ram"))
+			{
+				ram_counter++;
+			}
+			else
+				if(rsp.getString("Review").contains("camera"))
+				{
+					camera_counter++;
+				}
+				else
+					if(rsp.getString("Review").contains("memory"))
+					{
+						memory_counter++;
+					}
+					else
+						if(rsp.getString("Review").contains("speed"))
+						{
+							speed_counter++;
+						}
+						else
+							if(rsp.getString("Review").contains("battery"))
+							{
+								battery_counter++;
+							}
+			
+		}
+		
+		if((ram_counter > camera_counter) && (ram_counter > memory_counter) && (ram_counter > speed_counter) && (ram_counter > battery_counter))
+		{
+			maxcount = "ram";
+		}
+		else
+			if((camera_counter > ram_counter) && (camera_counter > memory_counter) && (camera_counter > speed_counter) && (camera_counter > battery_counter))
+			{
+				maxcount = "camera";
+			}
+			else
+				if((memory_counter > ram_counter) && (memory_counter > camera_counter) && (memory_counter > speed_counter) && (memory_counter > battery_counter))
+				{
+					maxcount = "memory";
+				}
+				else
+					if((speed_counter > ram_counter) && (speed_counter > camera_counter) && (speed_counter > memory_counter) && (speed_counter > battery_counter))
+					{
+						maxcount = "speed";
+					}
+					else
+						if((battery_counter > ram_counter) && (battery_counter > camera_counter) && (battery_counter > memory_counter) && (battery_counter > speed_counter))
+						{
+							maxcount = "battery";
+						}
+		
+		PreparedStatement ps = con.prepareStatement("SELECT product.productId, product.title FROM product WHERE product.productId = '" + prodid + "'");
+		ResultSet rs = ps.executeQuery();
+		if(rs.next())
+		{
+			pids.add(""+rs.getString("productId"));
+			ptitles.add(""+rs.getString("title"));
+		}
+		
+	}
+	
+	
+}
+
+List<String> sentences = new ArrayList<String>();
+	
+for(int i = 0; i <  pids.size(); i++)
+{
+	sentences.add("Customers having issues of " + maxcount + " for the product : " + pids.get(i) + " - " + ptitles.get(i) + " Please improve " + maxcount + " of this product");
+}
+
+%>
+<div>
+<%
+for(int i = 0; i <  pids.size(); i++)
+{
+%>
+<h5 style="color: purple;"><%=sentences.get(i) %></h5><br>
+<%
+}
+}
+catch(Exception e){
+	System.out.print(e);
+}
+%>
+
+</body>
+</html>

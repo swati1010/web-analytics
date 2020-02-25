@@ -1,0 +1,329 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
+<%@page import="com.google.gson.Gson"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="codes.Chart"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Admin</title>
+<link rel="stylesheet" href="ass1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="ass1/css/bootstrap-responsive.min.css" />
+<link rel="stylesheet" href="ass1/css/fullcalendar.css" />
+<link rel="stylesheet" href="ass1/css/matrix-style.css" />
+<link rel="stylesheet" href="ass1/css/matrix-media.css" />
+<link href="ass1/font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link rel="stylesheet" href="ass1/css/jquery.gritter.css" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+<style type="text/css">
+.bar{
+margin-left: 4em;
+    font-size: 20px;
+    color: #27a9e3;
+}
+
+
+</style>
+</head>
+<body>
+<%-- <%
+	ArrayList<String> loction = (ArrayList<String>)request.getAttribute("ulocation");
+	ArrayList<String> ucount = (ArrayList<String>)request.getAttribute("ulcount");
+	
+	Gson gsonObj = new Gson();
+    Map<Object,Object> map = null;
+    List<Map<Object,Object>> list = new ArrayList<Map<Object,Object>>();
+    for(int i = 0; i < loction.size(); i++)
+	{
+    	map = new HashMap<Object,Object>(); map.put("y", ucount.get(i)); map.put("indexLabel", loction.get(i)); list.add(map);
+	}
+    String dataPoints = gsonObj.toJson(list);
+    
+    list.clear();
+    map.clear();
+    ArrayList<String> dates = (ArrayList<String>)request.getAttribute("dates");
+	ArrayList<String> visits = (ArrayList<String>)request.getAttribute("visits");
+    
+    for(int i = 0; i < loction.size(); i++)
+	{
+    	map = new HashMap<Object,Object>(); map.put("label", dates.get(i)); map.put("y", visits.get(i)); list.add(map);
+	}
+    
+    String dataPoints1 = gsonObj.toJson(list);
+    
+    System.out.println(""+dataPoints1);
+    
+    list.clear();
+    map.clear();
+    
+    
+    String newusers = request.getAttribute("newcount").toString();
+    String repusers = request.getAttribute("repcount").toString();
+    
+		map = new HashMap<Object,Object>(); map.put("label", "New"); map.put("y", newusers); list.add(map);
+    	map = new HashMap<Object,Object>(); map.put("label", "Repeated"); map.put("y", repusers); list.add(map);
+    
+    String dataPoints2 = gsonObj.toJson(list);
+    
+    System.out.println(""+dataPoints2);
+    
+    list.clear();
+    map.clear();
+    
+    ArrayList<String> urls = (ArrayList<String>)request.getAttribute("urls");
+	ArrayList<String> hitcount = (ArrayList<String>)request.getAttribute("hitcount");
+	
+    for(int i = 0; i < loction.size(); i++)
+	{
+    	map = new HashMap<Object,Object>(); map.put("y", hitcount.get(i)); map.put("indexLabel", urls.get(i)); list.add(map);
+	}
+    String dataPoints3 = gsonObj.toJson(list);
+    
+%> --%>
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse">
+  <ul class="nav">
+    <li id="profile-messages" ><a title="" href="#" data-target="#profile-messages" ><i class="icon icon-user"></i>  <span class="text">Welcome Admin</span><b class="caret"></b></a>
+     
+    </li>
+    <li class=""><a title="" href="index.jsp"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a></li>
+  </ul>
+</div>
+<!--close-top-Header-menu-->
+<div id="header">
+  <h1><a href="#">Admin</a></h1>
+</div>
+<!--sidebar-menu-->
+<div id="sidebar"><a href="#" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>
+  <ul>
+  <li><a href="adminindex.jsp"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
+    <li> <a href="addproduct.jsp"><i class="icon icon-signal"></i> <span>Add New Products</span></a> </li>
+    <li> <a href="viewallproducts.jsp"><i class="icon icon-signal"></i> <span>View All Products</span></a> </li>
+    <li><a href="sortedreviews.jsp"><i class="icon icon-th"></i> <span>Sorted Reviews</span></a></li>
+     <li><a href="setdiscount.jsp"><i class="icon icon-th"></i> <span>Set Discount</span></a></li>
+     <li><a href="setoffers.jsp"><i class="icon icon-th"></i> <span>Set Offers</span></a></li>
+     <li><a href="invoicereports.jsp"><i class="icon icon-th"></i> <span>Invoice Details</span></a></li>
+     <li><a href="revenue.jsp"><i class="icon icon-th"></i> <span>Revenue</span></a></li>
+           <li class="active"><a href="#"><i class="icon icon-th"></i> <span>Display Chart</span></a></li>
+     
+  </ul>
+</div>
+<!--sidebar-menu-->
+
+<!--main-container-part-->
+<div id="content">
+<!--breadcrumbs-->
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a></div>
+  </div>
+<!--End-breadcrumbs-->
+<div class="container-fluid">
+
+<div id="score" width="100%" align="center"></div>
+    <hr>
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-th"></i> </span>
+            <h5>Display Chart</h5>
+          </div>
+          <div class="widget-content nopadding">
+<!--           <input type="button" id="btnPieChart" value="Show Charts" onclick="showChart()"/>  -->
+          <center>
+              <!-- <div class="pie" id="pie1"></div><br>
+               <div id="chartContainer" style="height: 300px; width: 100%;">
+  </div><br>
+               <div id="chartContainer2" style="height: 300px; width: 100%;">
+  </div></div><br>
+                <div class="pie" id="pie4"></div><br> -->
+                
+                 <img alt="" src="Chart//location.png">
+               <img alt="" src="Chart//visit_On_Website.png"><br>
+               <img alt="" src="Chart//New_repeat.png"><br>
+                <img alt="" src="Chart//hits.png"><br>
+                 <img alt="" src="Chart//active_user.png"><br>
+               </center>
+               </div> 
+               </div>
+               </div>
+               </div>
+               </div>                  
+            </div>
+            
+
+<!--end-main-container-part-->
+
+
+
+<script src="ass1/js/excanvas.min.js"></script> 
+<script src="ass1/js/jquery.min.js"></script> 
+<script src="ass1/js/jquery.ui.custom.js"></script> 
+<script src="ass1/js/bootstrap.min.js"></script> 
+<script src="ass1/js/jquery.flot.min.js"></script> 
+<script src="ass1/js/jquery.flot.resize.min.js"></script> 
+<script src="ass1/js/jquery.peity.min.js"></script> 
+<script src="ass1/js/fullcalendar.min.js"></script> 
+<script src="ass1/js/matrix.js"></script> 
+<script src="ass1/js/matrix.dashboard.js"></script> 
+<script src="ass1/js/jquery.gritter.min.js"></script> 
+<script src="ass1/js/matrix.interface.js"></script> 
+<script src="ass1/js/matrix.chat.js"></script> 
+<script src="ass1/js/jquery.validate.js"></script> 
+<script src="ass1/js/matrix.form_validation.js"></script> 
+<script src="ass1/js/jquery.wizard.js"></script> 
+<script src="ass1/js/jquery.uniform.js"></script> 
+<script src="ass1/js/select2.min.js"></script> 
+<script src="ass1/js/matrix.popover.js"></script> 
+<script src="ass1/js/jquery.dataTables.min.js"></script> 
+<script src="ass1/js/matrix.tables.js"></script> 
+<script type="text/javascript" src="ass1/js/canvasjs.min.js"></script>
+
+<script type="text/javascript">
+<%-- function showChart() {
+		var chart = new CanvasJS.Chart("pie1",
+		{
+			title:{
+				text: "Location wise Users Count"
+			},
+			theme: "theme2",
+			animationEnabled: true,
+			legend: {
+				maxWidth: 350,
+				itemWidth: 120
+			},
+			data: [
+			{
+				type: "pie",
+				showInLegend: true,
+				legendText: "{indexLabel}",
+				dataPoints: <%out.print(dataPoints); %>
+			}
+			]
+		});
+		chart.render();
+	  
+	
+var chart3 = new CanvasJS.Chart("pie4",
+		{
+			title:{
+				text: "Hit Count"
+			},
+			theme: "theme2",
+			animationEnabled: true,
+			legend: {
+				maxWidth: 350,
+				itemWidth: 120
+			},
+			data: [
+			{
+				type: "pie",
+				showInLegend: true,
+				legendText: "{indexLabel}",
+				dataPoints: <%out.print(dataPoints3); %>
+			}
+			]
+		});
+		chart3.render();
+		
+		var chart1 = new CanvasJS.Chart("chartContainer2", {
+
+		      theme: "theme2",
+		      animationEnabled: true,    
+		      title:{
+		        text: "Status Of Users"              
+		      },
+
+		      data: [  //array of dataSeries     
+		      { //dataSeries - first quarter
+		 /*** Change type "column" to "bar", "area", "line" or "pie"***/        
+		       type: "column",
+		       name: "Status",
+		       showInLegend: true,
+		       dataPoints: <%out.print(dataPoints2); %>
+		     }
+		    ],
+		 /** Set axisY properties here*/
+		    axisY:{
+		      prefix: "",
+		      suffix: ""
+		    }    
+		  });
+
+		chart1.render();
+		
+		var chart2 = new CanvasJS.Chart("chartContainer", {
+			  zoomEnabled: false,
+		      theme: "theme2",
+		      animationEnabled: true,
+				axisY2:{
+					valueFormatString:"0.0 bn",
+					
+					maximum: 1.2,
+					interval: .2,
+					interlacedColor: "#F5F5F5",
+					gridColor: "#D7D7D7",      
+		 			tickColor: "#D7D7D7"								
+				},
+		      title:{
+		        text: "Visits on website"              
+		      },
+		      toolTip:{
+	              shared: true
+				      },
+				legend:{
+				verticalAlign: "bottom",
+				horizontalAlign: "center",
+				fontSize: 15,
+				fontFamily: "Lucida Sans Unicode"
+				
+				},
+		      data: [  //array of dataSeries     
+		      { //dataSeries - first quarter
+		 /*** Change type "column" to "bar", "area", "line" or "pie"***/        
+		       type: "spline",
+				lineThickness:3,
+				showInLegend: true,
+		       name: "Visits",
+		       dataPoints: <%out.print(dataPoints1); %>
+		     }
+		    ],
+		 /** Set axisY properties here*/
+		    axisY:{
+		      prefix: "",
+		      suffix: ""
+		    }    
+		  });
+
+		chart2.render();
+		}   --%>
+</script>
+
+<script type="text/javascript">
+  // This function is called from the pop-up menus to transfer to
+  // a different page. Ignore if the value returned is a null string:
+  function goPage (newURL) {
+
+      // if url is empty, skip the menu dividers and reset the menu selection to default
+      if (newURL != "") {
+      
+          // if url is "-", it is this page -- reset the menu:
+          if (newURL == "-" ) {
+              resetMenu();            
+          } 
+          // else, send page to designated URL            
+          else {  
+            document.location.href = newURL;
+          }
+      }
+  }
+
+// resets the menu selection upon entry to this page:
+function resetMenu() {
+   document.gomenu.selector.selectedIndex = 2;
+}
+</script>
+</body>
+</html>
+
